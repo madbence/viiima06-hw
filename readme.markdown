@@ -4,8 +4,10 @@
 
 ## compile
 
+`glfw`, `GLEW`, `GL`, `cudart`, `curandom` needed.
+
 ```sh
-$ g++ -std=c++11 -lGL -lGLEW -lglfw -o hw main.cpp
+$ make
 ```
 
 ## license
