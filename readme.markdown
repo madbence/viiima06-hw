@@ -5,7 +5,7 @@
 ## compile
 
 ```sh
-$ g++ -lGL -lGLEW -lglfw -o hw main.cpp
+$ g++ -std=c++11 -lGL -lGLEW -lglfw -o hw main.cpp
 ```
 
 ## license
