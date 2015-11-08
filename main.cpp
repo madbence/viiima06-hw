@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <cmath>
 
 #define GLSL(src) "#version 150 core\n" #src
@@ -35,7 +36,8 @@ GLuint createShader(const char** source, GLenum type) {
 
 struct ray {
   vec3 p, d;
-  ray(const vec3& p = vec3(), const vec3& d = vec3()):p(p),d(d) {}
+  float w;
+  ray(const vec3& p = vec3(), const vec3& d = vec3()):p(p),d(d),w(1) {}
 };
 
 struct plane {
@@ -53,6 +55,8 @@ struct obj {
     plane p;
     sphere s;
   };
+  vec3 col;
+  bool emit;
   obj():type(NOTHING){}
 };
 
@@ -80,14 +84,33 @@ float intersect(const obj& o, const ray& r) {
 ray rays[600 * 600];
 obj objs[2];
 
+float r() {
+  return rand() * 2.0 / RAND_MAX - 1;
+}
+
 void trace(int i) {
+  if (rays[i].w < 0.01) return;
   float t = -1;
+  obj* o = NULL;;
   for (int j = 0; j < 2; j++) {
     float t0 = intersect(objs[j], rays[i]);
-    t = t0 > t ? t0 : t;
+    if (t0 > 0 && t < 0 || t0 > 0 && t0 < t) {
+      t = t0;
+      o = &objs[j];
+    }
   }
-  if (t < 0) return;
-  screen[i] = 1;
+  if (t > 0) {
+    if ((*o).emit) {
+      screen[i] = screen[i] + (*o).col * rays[i].w;
+      rays[i].w = -1;
+      return;
+    }
+    rays[i].w *= 0.5;
+    rays[i].p = rays[i].p + rays[i].d * t;
+    rays[i].d = ~vec3(r(), r(), r());
+  } else {
+    rays[i].w = -1;
+  }
 }
 
 void render() {
@@ -103,8 +126,10 @@ void render() {
     }
   }
 
-  for (int i = 0; i < 600 * 600; i++) {
-    trace(i);
+  for (int j = 0; j < 10; j++) {
+    for (int i = 0; i < 600 * 600; i++) {
+      trace(i);
+    }
   }
 }
 
@@ -186,14 +211,15 @@ int main() {
   objs[1].type = obj::SPHERE;
   objs[1].s.p = vec3(1, 1, 0);
   objs[1].s.r = 0.1;
+  objs[1].emit = true;
+  objs[1].col = vec3(1, 1, 1);
 
-  int i = 0;
-    render();
   while(!glfwWindowShouldClose(window))
   {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    render();
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 600, 600, 0, GL_RGB, GL_FLOAT, screen);
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
