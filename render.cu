@@ -137,7 +137,7 @@ __global__ void trace(curandState *state, ray* rays, obj* objs, vec3* screen) {
 
 __device__ float r(curandState* state) {
   int i = threadIdx.x + blockDim.x * blockIdx.x;
-  return curand_uniform(&state[i]) * 2 -1;
+  return curand_uniform(&state[i]) * 2 - 1;
 }
 
 __global__ void genRays(curandState* state, ray* rays) {
