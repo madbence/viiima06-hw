@@ -4,7 +4,7 @@
 
 ## compile
 
-`glfw`, `GLEW`, `GL`, `cudart`, `curandom` needed.
+`glfw`, `GLEW`, `GL`, `cudart`, `curand` needed.
 
 ```sh
 $ make
