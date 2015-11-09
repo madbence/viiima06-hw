@@ -2,6 +2,8 @@
 
 > *WIP* the goal is to write a CUDA accelerated raytracer
 
+![screenshot](screenshot.png)
+
 ## compile
 
 `glfw`, `GLEW`, `GL`, `cudart`, `curand` needed.
