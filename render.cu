@@ -99,7 +99,10 @@ __global__ void setup_kernel(curandState *state) {
 }
 
 curandState *r_state;
-__device__ __host__ vec3 rv(curandState* state, const vec3& n) {
+#ifdef USE_CUDA
+__device__
+#endif
+vec3 rv(curandState* state, const vec3& n) {
   float x, y, z, d;
   vec3 t;
 #ifdef USE_CUDA
@@ -172,7 +175,10 @@ void trace(curandState *state, ray* rays, obj* objs, vec3* screen, int i_) {
   }
 }
 
-__device__ __host__ float r(curandState* state) {
+#ifdef USE_CUDA
+__device__
+#endif
+float r(curandState* state) {
 #ifdef USE_CUDA
   int i = threadIdx.x + blockDim.x * blockIdx.x;
   return curand_uniform(&state[i]) * 2 - 1;
@@ -257,11 +263,11 @@ void init() {
   cudaMalloc(&rays_, 600*600*sizeof(ray)); err("malloc rays");
   cudaMalloc(&objs_, 8*sizeof(obj)); err("malloc objs");
   cudaMalloc(&screen_, 600*600*sizeof(vec3)); err("malloc screen");
+  setup_kernel<<<600, 600>>>(r_state); err("call rand_setup");
 #else
   rays_ = (ray*)malloc(600*600*sizeof(ray));
 #endif
 
-  setup_kernel<<<600, 600>>>(r_state); err("call rand_setup");
   objs[0].type = obj::SPHERE;
   objs[0].col = vec3(1, 1, 1);
   objs[0].s.p = vec3(0.5, -0.5, 0);
