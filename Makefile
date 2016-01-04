@@ -11,7 +11,7 @@ main2.o: main2.cpp
 	g++ -c -O3 main2.cpp
 
 render.o: render.cu
-	nvcc -std=c++11 -c -O3 render.cu -DUSE_CUDA
+	nvcc -std=c++11 -c -O3 render.cu -D$(MODE) -DBASE_ITER=$(BASE_ITER)
 
 clean:
-	rm hw main.o render.o
+	rm hw-* main.o render.o

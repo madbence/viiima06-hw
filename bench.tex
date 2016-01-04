@@ -1,0 +1,133 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage{xltxtra}
+\usepackage{graphicx}
+\usepackage{setspace}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{8pt plus 3pt minus 3pt}
+\onehalfspacing
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage[magyar]{babel}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{pgfplots}
+
+\lhead{Nagyteljesítményű párhuzamos feldolgozás}
+\rhead{Dányi Bence}
+\rfoot{\today}
+
+\begin{document}
+
+Az ábrán CPU illetve CUDA futtatás mellett mért futási időket láthatjuk.
+A mérések linux operációs rendszeren (\texttt{x86\_64 Linux 4.2.5-1-ARCH}),
+Intel Core i5-4690 processzoron (3.9 GHz), és GeForce GTX980 grafikus kártyán
+készültek (CUDA 7.5, 2048 CUDA mag), 5.2.0-ás \texttt{g++} és 7.5.17-es \texttt{nvcc} fordítóval.
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\begin{loglogaxis}[
+  xlabel={Iterációk [$\times 10$ db]},
+  ylabel={Futási idő [s]},
+  % xmin=0, xmax=100,
+  % ymin=0, ymax=120,
+  % xtick={0,20,40,60,80,100},
+  % ytick={0,20,40,60,80,100,120},
+  legend pos=north west,
+  % ymajorgrids=true,
+  % grid style=dashed,
+]
+
+\addplot[
+  color=blue,
+  mark=square,
+]
+coordinates {
+(1,0.967)
+(2,1.054)
+(5,1.330)
+(10,1.733)
+(20,2.581)
+(50,5.176)
+(100,9.453)
+(200,18.056)
+(500,43.863)
+};
+
+\addplot[
+  color=red,
+  mark=square,
+]
+coordinates {
+(1,1.856)
+(2,3.637)
+(5,8.961)
+(10,17.856)
+(20,35.745)
+(50,89.038)
+(100,179.132)
+(200,355.909)
+(500,890.035)
+};
+\legend{CUDA,CPU}
+
+\end{loglogaxis}
+\end{tikzpicture}
+  \caption{A futási idő változása a különböző gyorsítási módok mellett}
+\end{figure}
+
+Az iterációk számának növelésével a képminőség javul (az algoritmus kifinomultságának függvényében),
+alacsony számú iterációnál a különböző adminisztratív (pl. memória) műveletek még összemérhetőek a fő számítási folyamatokkal, ez a különbség később eltűnik.
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[b]{0.19\textwidth}
+    \includegraphics[width=\textwidth]{render-no-cuda-2.png}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.19\textwidth}
+    \includegraphics[width=\textwidth]{render-no-cuda-5.png}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.19\textwidth}
+    \includegraphics[width=\textwidth]{render-no-cuda-20.png}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.19\textwidth}
+    \includegraphics[width=\textwidth]{render-no-cuda-50.png}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.19\textwidth}
+    \includegraphics[width=\textwidth]{render-no-cuda-200.png}
+  \end{subfigure}
+  \caption{Eredmények különböző számú iterációk mellett}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\begin{semilogxaxis}[
+  xlabel={Iterációk [$\times 10$ db]},
+  ylabel={Speedup},
+  legend pos=north west,
+]
+
+\addplot[
+  color=blue,
+  mark=square,
+]
+coordinates {
+(1,1.919)
+(2,3.449)
+(5,6.911)
+(10,10.603)
+(20,13.643)
+(50,17.60)
+(100,18.696)
+(200,19.698)
+(500,20.266)
+};
+
+\end{semilogxaxis}
+\end{tikzpicture}
+  \caption{A futási idő változása a különböző gyorsítási módok mellett},
+\end{figure}
+
+\end{document}

@@ -4,6 +4,8 @@
 
 ![screenshot](screenshot.png)
 
+[Some docs/benchmarks in hungarian](bench.pdf)
+
 ## compile
 
 `glfw`, `GLEW`, `GL`, `cudart`, `curand` needed.

@@ -5,6 +5,10 @@
 #include <cuda.h>
 #include <curand_kernel.h>
 
+#ifndef BASE_ITER
+#define BASE_ITER 10
+#endif
+
 struct vec3 {
   float x, y, z;
   __device__ __host__ vec3(float x = 0, float y = 0, float z = 0):x(x),y(y),z(z) {}
@@ -223,7 +227,7 @@ void render(float* s) {
   cudaMemcpy(screen_, screen, 600*600*sizeof(vec3), cudaMemcpyHostToDevice); err("memcpy screen");
 #endif
 
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < BASE_ITER; i++) {
 #ifdef USE_CUDA
     genRays<<<600, 600>>>(r_state, rays_, 0);
 #else
